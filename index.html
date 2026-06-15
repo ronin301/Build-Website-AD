@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Folder Agent - Multi-Provider AI Coding Platform</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-left">
+            <div>
+                <h1>Folder Agent</h1>
+                <p class="header-subtitle">Multi-provider AI coding platform</p>
+            </div>
+            <span class="header-tag">GitHub Native</span>
+            <span id="githubStatus" class="folder-badge disconnected">GitHub</span>
+            <span id="providerStatus" class="folder-badge neutral">AI Provider</span>
+        </div>
+        <div class="header-actions">
+            <button id="settingsBtn" class="btn btn-ghost">GitHub Settings</button>
+            <button id="aiSettingsBtn" class="btn btn-ghost">AI Settings</button>
+            <button id="createProjectBtn" class="btn btn-primary">+ Create Project</button>
+        </div>
+    </header>
+
+    <section id="homeScreen" class="home-screen">
+        <div class="home-header">
+            <div>
+                <h2>Recent Projects</h2>
+                <p>Projects are loaded from your configured GitHub repository and branch.</p>
+            </div>
+            <button id="scanRepositoryBtn" class="btn btn-secondary">Repository Scan</button>
+        </div>
+        <div id="repositoryOverview" class="repository-overview hidden"></div>
+        <div id="projectsList" class="projects-grid"></div>
+    </section>
+
+    <section id="workspaceScreen" class="workspace hidden">
+        <div class="workspace-toolbar">
+            <div class="toolbar-left">
+                <button id="backToProjectsBtn" class="btn btn-ghost">← Projects</button>
+                <h2 id="workspaceProjectName">Project</h2>
+                <span id="workspaceFolderPath" class="folder-badge">GitHub</span>
+                <span id="activeBranchBadge" class="folder-badge neutral">Branch</span>
+            </div>
+            <div class="toolbar-right">
+                <button id="scanProjectBtn" class="btn btn-secondary">📊 Scan Project</button>
+                <button id="previewBtn" class="btn btn-secondary">Preview</button>
+                <button id="publishBtn" class="btn btn-secondary">Publish</button>
+                <button id="show-diagnostics-btn" class="btn btn-ghost" title="System diagnostics">🔧</button>
+                <button id="deleteProjectBtn" class="btn btn-danger">Delete Project</button>
+            </div>
+        </div>
+
+        <!-- Mobile sticky section navigation (mobile-first) -->
+        <nav id="workspaceSectionNav" class="workspace-section-nav hidden" aria-label="Workspace sections">
+            <button data-section="files" class="section-tab">Files</button>
+            <button data-section="workflow" class="section-tab">Workflow</button>
+            <button data-section="changes" class="section-tab">Changes</button>
+            <button data-section="summary" class="section-tab">Summary</button>
+            <button data-section="repository" class="section-tab">Repository</button>
+            <button data-section="activity" class="section-tab">Activity</button>
+        </nav>
+
+        <div class="workspace-body">
+            <aside class="sidebar explorer-panel">
+                <div class="panel-header">
+                    <span>Explorer</span>
+                    <div class="explorer-controls">
+                        <button id="refreshExplorerBtn" class="btn btn-small btn-ghost" title="Refresh">Refresh</button>
+                        <button id="expand-all-files-btn" class="btn btn-small btn-ghost" title="Expand all">⊞</button>
+                        <button id="collapse-all-files-btn" class="btn btn-small btn-ghost" title="Collapse all">⊟</button>
+                    </div>
+                </div>
+                <div class="explorer-search">
+                    <input type="text" id="file-search-input" placeholder="Search files..." />
+                </div>
+                <div id="fileExplorer" class="file-explorer">
+                    <p class="empty-state">Open a project to view files</p>
+                </div>
+                <div id="recently-opened-files" class="recently-opened-files"></div>
+            </aside>
+
+            <main class="editor-panel">
+                <div class="panel-header">
+                    <div class="header-stack">
+                        <span id="editorFileName">No file open</span>
+                        <span id="editorFileMeta" class="header-meta">Select a file from the explorer to inspect or edit.</span>
+                    </div>
+                    <div class="editor-actions">
+                        <button id="save-file-btn" class="btn btn-small btn-primary" title="Save (Ctrl+S)">Save</button>
+                        <button id="reload-file-btn" class="btn btn-small btn-ghost" title="Reload">Reload</button>
+                        <button id="copy-file-btn" class="btn btn-small btn-ghost" title="Copy">Copy</button>
+                        <button id="rename-file-btn" class="btn btn-small btn-ghost" title="Rename">Rename</button>
+                        <button id="delete-file-btn" class="btn btn-small btn-ghost" title="Delete">Delete</button>
+                    </div>
+                </div>
+                <div class="editor-status-bar" id="editor-status-bar">No file open</div>
+                <textarea id="fileEditor" class="file-editor" placeholder="Select a file from the explorer to edit..." disabled></textarea>
+                <div class="editor-footer">
+                    <button id="create-file-btn" class="btn btn-small btn-secondary">+ New File</button>
+                    <button id="create-folder-btn" class="btn btn-small btn-secondary">+ New Folder</button>
+                </div>
+            </main>
+
+            <aside class="right-panel">
+                <div class="panel-section">
+                    <div class="panel-header">
+                        <span>Agent Workflow</span>
+                        <span id="workflowStatusBadge" class="workflow-badge idle">Idle</span>
+                    </div>
+                    <div class="settings-row">
+                        <label for="workflowAction">Action</label>
+                        <select id="workflowAction">
+                            <option value="generate">Generate File</option>
+                            <option value="update">Update File</option>
+                            <option value="delete">Delete File</option>
+                            <option value="rename">Rename File</option>
+                            <option value="explain">Explain Code</option>
+                            <option value="refactor">Refactor Code</option>
+                        </select>
+                        <label for="workflowTargetFile">Target File</label>
+                        <input type="text" id="workflowTargetFile" placeholder="Optional. Uses the open file when left blank.">
+                        <label for="promptInput">Prompt</label>
+                        <textarea id="promptInput" placeholder="Describe the code task, architecture goal, or refactor you want."></textarea>
+                        <div class="inline-actions">
+                            <button id="sendPromptBtn" class="btn btn-primary">Run Workflow</button>
+                            <button id="clearWorkflowBtn" class="btn btn-ghost">Clear</button>
+                        </div>
+                    </div>
+                    <div id="workflowTimeline" class="workflow-timeline">Prompt -> Project Analysis -> File Detection -> AI Generation -> Preview Changes -> User Approval -> Commit</div>
+                    <div id="chatHistory" class="chat-history"></div>
+                </div>
+
+                <div class="panel-section" data-section="changes">
+                    <div class="panel-header">
+                        <span>Staged Changes</span>
+                        <span id="stagedChangeCount" class="header-meta">0 changes</span>
+                    </div>
+                    <div class="settings-row">
+                        <label for="commitMessageInput">Commit Message</label>
+                        <input type="text" id="commitMessageInput" placeholder="Commit message will be suggested by AI">
+                        <div class="inline-actions">
+                            <button id="approveWorkflowBtn" class="btn btn-success" disabled>Approve & Commit</button>
+                            <button id="discardWorkflowBtn" class="btn btn-ghost" disabled>Discard</button>
+                        </div>
+                    </div>
+                    <div id="stagedChangesList" class="staged-changes-list">
+                        <p class="empty-state">No staged changes yet</p>
+                    </div>
+                    <pre id="diffViewer" class="diff-viewer">Select or generate a staged change to view the diff.</pre>
+                </div>
+
+                <div class="panel-section" data-section="summary">
+                    <div class="panel-header">Project Summary</div>
+                    <div id="projectSummary" class="summary-box">Project summary will appear here</div>
+                </div>
+
+                <div class="panel-section" data-section="preview">
+                    <div class="panel-header">
+                        <span>Preview</span>
+                        <div class="preview-actions">
+                            <button id="refresh-preview-btn" class="btn btn-small btn-secondary" title="Refresh">🔄</button>
+                            <button id="open-preview-tab-btn" class="btn btn-small btn-secondary" title="Open in new tab">↗️</button>
+                            <button id="copy-preview-url-btn" class="btn btn-small btn-secondary" title="Copy URL">📋</button>
+                        </div>
+                    </div>
+                    <div id="preview-info-panel" class="preview-info-panel">No preview available</div>
+                </div>
+
+                <div class="panel-section" data-section="publish">
+                    <div class="panel-header">
+                        <span>Publish</span>
+                        <button id="publish-btn" class="btn btn-small btn-primary">Publish</button>
+                    </div>
+                    <div id="publish-info-panel" class="publish-info-panel">Configure repository and branch to publish</div>
+                </div>
+
+                <div class="panel-section" data-section="repository">
+                    <div class="panel-header">
+                        <span>Repository Intelligence</span>
+                        <button id="refreshRepoInsightsBtn" class="btn btn-small btn-ghost">Refresh</button>
+                    </div>
+                    <div class="settings-row">
+                        <label for="branchSelect">Branch</label>
+                        <div class="inline-actions">
+                            <select id="branchSelect"></select>
+                            <button id="createBranchBtn" class="btn btn-small btn-secondary">New Branch</button>
+                        </div>
+                    </div>
+                    <div id="repoSummary" class="summary-box">Repository insights will appear here.</div>
+                    <div class="subsection-title">Commit History</div>
+                    <div id="commitHistory" class="list-box">No commits loaded</div>
+                    <div class="subsection-title">Pull Requests</div>
+                    <div class="inline-actions panel-actions">
+                        <button id="refreshPrBtn" class="btn btn-small btn-ghost">Refresh PRs</button>
+                        <button id="createPrBtn" class="btn btn-small btn-secondary">Create PR</button>
+                    </div>
+                    <div id="pullRequestList" class="list-box">No pull requests loaded</div>
+                </div>
+
+                <div class="panel-section" data-section="activity">
+                    <div class="panel-header">Activity Log</div>
+                    <div id="activityLog" class="activity-log">No activity yet</div>
+                </div>
+            </aside>
+        </div>
+    </section>
+
+    <div id="settingsModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>GitHub Settings</h3>
+                <button id="closeSettingsBtn" class="btn btn-ghost">x</button>
+            </div>
+            <p class="modal-hint">GitHub remains the source of truth. Commits happen only after explicit approval.</p>
+            <div class="settings-form">
+                <label>GitHub Token</label>
+                <input type="password" id="githubToken" placeholder="ghp_...">
+                <label>Repository Owner</label>
+                <input type="text" id="githubOwner" placeholder="your-user-or-org">
+                <label>Repository Name</label>
+                <input type="text" id="githubRepo" placeholder="your-repo">
+                <label>Base Folder</label>
+                <input type="text" id="githubBaseFolder" placeholder="projects">
+                <label>Default Branch</label>
+                <input type="text" id="githubDefaultBranch" placeholder="main">
+            </div>
+            <button id="saveSettingsBtn" class="btn btn-primary btn-full">Save Settings</button>
+        </div>
+    </div>
+
+    <div id="aiSettingsModal" class="modal hidden">
+        <div class="modal-content modal-medium">
+            <div class="modal-header">
+                <h3>AI Settings</h3>
+                <button id="closeAiSettingsBtn" class="btn btn-ghost">x</button>
+            </div>
+            <p class="modal-hint">Switch providers anytime. Each provider keeps its own API key, model, and endpoint.</p>
+            <div class="settings-form">
+                <label>Active Provider</label>
+                <select id="activeProviderSelect">
+                    <option value="gemini">Gemini</option>
+                    <option value="openai">OpenAI</option>
+                    <option value="claude">Claude</option>
+                    <option value="openrouter">OpenRouter</option>
+                </select>
+
+                <div class="provider-settings-group" data-provider="gemini">
+                    <h4>Gemini</h4>
+                    <input type="password" id="geminiApiKey" placeholder="Gemini API Key">
+                    <input type="text" id="geminiModel" placeholder="gemini-2.0-flash">
+                    <input type="text" id="geminiBaseUrl" placeholder="https://generativelanguage.googleapis.com/v1beta/models">
+                </div>
+
+                <div class="provider-settings-group" data-provider="openai">
+                    <h4>OpenAI</h4>
+                    <input type="password" id="openaiApiKey" placeholder="OpenAI API Key">
+                    <input type="text" id="openaiModel" placeholder="gpt-4.1-mini">
+                    <input type="text" id="openaiBaseUrl" placeholder="https://api.openai.com/v1/chat/completions">
+                </div>
+
+                <div class="provider-settings-group" data-provider="claude">
+                    <h4>Claude</h4>
+                    <input type="password" id="claudeApiKey" placeholder="Claude API Key">
+                    <input type="text" id="claudeModel" placeholder="claude-3-5-sonnet-latest">
+                    <input type="text" id="claudeBaseUrl" placeholder="https://api.anthropic.com/v1/messages">
+                </div>
+
+                <div class="provider-settings-group" data-provider="openrouter">
+                    <h4>OpenRouter</h4>
+                    <input type="password" id="openrouterApiKey" placeholder="OpenRouter API Key">
+                    <input type="text" id="openrouterModel" placeholder="openai/gpt-4.1-mini">
+                    <input type="text" id="openrouterBaseUrl" placeholder="https://openrouter.ai/api/v1/chat/completions">
+                    <input type="text" id="openrouterSiteUrl" placeholder="https://folder-agent.local">
+                    <input type="text" id="openrouterSiteName" placeholder="Folder Agent">
+                </div>
+            </div>
+            <button id="saveAiSettingsBtn" class="btn btn-primary btn-full">Save AI Settings</button>
+        </div>
+    </div>
+
+    <div id="previewModal" class="modal hidden">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3>Website Preview</h3>
+                <button id="closePreviewBtn" class="btn btn-ghost">x</button>
+            </div>
+            <iframe id="previewFrame" class="preview-frame" title="Website Preview"></iframe>
+        </div>
+    </div>
+
+    <div id="projectModal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Create New Project</h3>
+            <p class="modal-hint">Each project maps to a GitHub folder and can be worked on from any branch.</p>
+            <input type="text" id="projectName" placeholder="Project Name">
+            <button id="saveProjectBtn" class="btn btn-primary btn-full">Create & Open</button>
+        </div>
+    </div>
+
+    <script src="js/security.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/github-settings.js"></script>
+    <script src="js/github-api.js"></script>
+    <script src="js/activity-log.js"></script>
+    <script src="js/gemini-api.js"></script>
+    <script src="js/code-generator.js"></script>
+    <script src="js/project-reopen.js"></script>
+    <script src="js/workspace.js"></script>
+    <script src="js/file-manager.js"></script>
+    <script src="js/project-manifest.js"></script>
+    <script src="js/agent.js"></script>
+    <script src="js/ai-engine.js"></script>
+    <script src="js/project-manager.js"></script>
+    <script src="js/publish.js"></script>
+    <!-- Phase 3 Modules -->
+    <script src="js/panel-resizer.js"></script>
+    <script src="js/project-scan-engine.js"></script>
+    <script src="js/project-cleanup.js"></script>
+    <script src="js/diagnostics.js"></script>
+    <script src="js/preview-improvements.js"></script>
+    <script src="js/publish-improvements.js"></script>
+    <script src="js/workflow-improvements.js"></script>
+    <script src="js/explorer-improvements.js"></script>
+    <script src="js/editor-improvements.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

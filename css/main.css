@@ -1,0 +1,859 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg: #0b1020;
+    --bg-elevated: #11182b;
+    --bg-panel: #151f34;
+    --bg-soft: #1a2742;
+    --bg-hover: #22304f;
+    --border: #2d3b59;
+    --border-strong: #4e648f;
+    --text: #e8eefc;
+    --text-muted: #95a3bf;
+    --accent: #4f8cff;
+    --accent-2: #2dd4bf;
+    --success: #22c55e;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --neutral: #94a3b8;
+    --shadow: 0 18px 45px rgba(0, 0, 0, 0.24);
+}
+
+body {
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(180deg, #08101f 0%, #0d1426 100%);
+    color: var(--text);
+    min-height: 100vh;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.app-header,
+.workspace-toolbar,
+.header-left,
+.header-actions,
+.toolbar-left,
+.toolbar-right,
+.inline-actions,
+.panel-actions,
+.modal-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.app-header {
+    justify-content: space-between;
+    padding: 14px 22px;
+    background: rgba(10, 17, 33, 0.9);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(14px);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+}
+
+.header-left {
+    flex-wrap: wrap;
+}
+
+.header-left h1 {
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1.1;
+    background: linear-gradient(90deg, #93c5fd, #67e8f9);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.header-subtitle {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.header-tag,
+.folder-badge,
+.workflow-badge {
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+
+.header-tag {
+    color: var(--text-muted);
+    border-color: var(--border);
+    background: rgba(148, 163, 184, 0.08);
+}
+
+.folder-badge {
+    background: rgba(34, 197, 94, 0.12);
+    color: var(--success);
+    border-color: rgba(34, 197, 94, 0.28);
+}
+
+.folder-badge.neutral {
+    background: rgba(148, 163, 184, 0.12);
+    color: var(--neutral);
+    border-color: rgba(148, 163, 184, 0.3);
+}
+
+.folder-badge.disconnected {
+    background: rgba(239, 68, 68, 0.12);
+    color: var(--danger);
+    border-color: rgba(239, 68, 68, 0.28);
+}
+
+.workflow-badge {
+    background: rgba(79, 140, 255, 0.12);
+    color: #a9c6ff;
+    border-color: rgba(79, 140, 255, 0.28);
+}
+
+.workflow-badge.idle {
+    color: var(--neutral);
+    border-color: rgba(148, 163, 184, 0.3);
+    background: rgba(148, 163, 184, 0.08);
+}
+
+.workflow-badge.running {
+    color: #fcd34d;
+    border-color: rgba(245, 158, 11, 0.32);
+    background: rgba(245, 158, 11, 0.12);
+}
+
+.workflow-badge.ready {
+    color: #86efac;
+    border-color: rgba(34, 197, 94, 0.32);
+    background: rgba(34, 197, 94, 0.12);
+}
+
+.workflow-badge.error {
+    color: #fda4af;
+    border-color: rgba(239, 68, 68, 0.32);
+    background: rgba(239, 68, 68, 0.12);
+}
+
+.btn {
+    border: 1px solid transparent;
+    cursor: pointer;
+    padding: 9px 14px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 13px;
+    transition: 0.18s ease;
+    color: white;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.16);
+}
+
+.btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent), #2563eb);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #16a34a, var(--success));
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #8b5cf6, #6366f1);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #dc2626, var(--danger));
+}
+
+.btn-ghost {
+    background: transparent;
+    border-color: var(--border);
+    color: var(--text-muted);
+}
+
+.btn-small {
+    padding: 6px 10px;
+    font-size: 12px;
+}
+
+.btn-full {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.home-screen {
+    padding: 28px;
+    max-width: 1320px;
+    margin: 0 auto;
+}
+
+.home-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.home-header h2 {
+    font-size: 24px;
+    margin-bottom: 4px;
+}
+
+.home-header p {
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.repository-overview,
+.project-card,
+.summary-box,
+.activity-log,
+.list-box,
+.diff-viewer,
+.workflow-timeline,
+.chat-message,
+.staged-change-item {
+    background: rgba(17, 24, 43, 0.9);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+}
+
+.repository-overview {
+    padding: 16px 18px;
+    margin-bottom: 18px;
+    color: var(--text-muted);
+    white-space: pre-wrap;
+    line-height: 1.65;
+}
+
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+.project-card {
+    padding: 18px;
+    cursor: pointer;
+    transition: 0.18s ease;
+}
+
+.project-card:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-2px);
+}
+
+.project-card h3 {
+    font-size: 17px;
+    margin-bottom: 8px;
+}
+
+.project-card p,
+.project-card .meta {
+    color: var(--text-muted);
+}
+
+.project-card .meta {
+    font-size: 12px;
+    margin-top: 10px;
+}
+
+.workspace {
+    min-height: calc(100vh - 73px);
+    display: flex;
+    flex-direction: column;
+}
+
+.workspace-toolbar {
+    justify-content: space-between;
+    padding: 12px 18px;
+    background: rgba(12, 19, 35, 0.92);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+}
+
+.toolbar-left,
+.toolbar-right {
+    flex-wrap: wrap;
+}
+
+.workspace-toolbar h2 {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.workspace-body {
+    display: grid;
+    grid-template-columns: 270px minmax(0, 1fr) 430px;
+    min-height: calc(100vh - 127px);
+}
+
+.sidebar,
+.editor-panel,
+.right-panel {
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+}
+
+.right-panel {
+    border-right: none;
+    overflow-y: auto;
+    background: rgba(9, 14, 25, 0.72);
+}
+
+.panel-section {
+    border-bottom: 1px solid var(--border);
+}
+
+.panel-header {
+    padding: 12px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    background: rgba(16, 24, 44, 0.96);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.header-meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+.file-explorer {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    font-size: 13px;
+    background: rgba(10, 15, 27, 0.75);
+}
+
+.file-item,
+.folder-item {
+    padding: 7px 9px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text);
+}
+
+.file-item:hover,
+.folder-item:hover {
+    background: var(--bg-hover);
+}
+
+.file-item.active {
+    background: rgba(79, 140, 255, 0.16);
+    color: #a9c6ff;
+    border: 1px solid rgba(79, 140, 255, 0.25);
+}
+
+.folder-children {
+    padding-left: 14px;
+}
+
+.file-editor {
+    flex: 1;
+    background: #09111f;
+    color: var(--text);
+    border: none;
+    padding: 18px;
+    font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.65;
+    resize: none;
+    outline: none;
+}
+
+.settings-row,
+.settings-form {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.settings-form {
+    padding: 0 0 14px;
+}
+
+.settings-form label,
+.settings-row label {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.settings-form input,
+.settings-form select,
+.settings-row input,
+.settings-row select,
+textarea,
+#projectName,
+#githubToken,
+#githubOwner,
+#githubRepo,
+#githubBaseFolder,
+#githubDefaultBranch {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: rgba(8, 16, 31, 0.92);
+    color: var(--text);
+    font-size: 13px;
+    outline: none;
+}
+
+textarea {
+    min-height: 92px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+#promptInput {
+    min-height: 120px;
+}
+
+.workflow-timeline {
+    margin: 0 14px 14px;
+    padding: 14px;
+    color: var(--text-muted);
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.chat-history {
+    max-height: 240px;
+    overflow-y: auto;
+    padding: 0 14px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.chat-message {
+    padding: 10px 12px;
+}
+
+.chat-user {
+    border-left: 3px solid var(--accent);
+}
+
+.chat-assistant {
+    border-left: 3px solid var(--success);
+}
+
+.chat-meta {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 5px;
+}
+
+.chat-text {
+    white-space: pre-wrap;
+    line-height: 1.55;
+    font-size: 13px;
+}
+
+.chat-empty,
+.empty-state {
+    color: var(--text-muted);
+    font-size: 13px;
+    padding: 8px 2px;
+}
+
+.staged-changes-list,
+.list-box {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.staged-change-item {
+    padding: 12px;
+    cursor: pointer;
+}
+
+.staged-change-item.active {
+    border-color: var(--border-strong);
+    background: rgba(34, 48, 79, 0.95);
+}
+
+.staged-change-title {
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.staged-change-meta {
+    color: var(--text-muted);
+    font-size: 12px;
+    margin-top: 4px;
+    line-height: 1.5;
+}
+
+.diff-viewer {
+    margin: 0 14px 14px;
+    padding: 14px;
+    min-height: 220px;
+    max-height: 360px;
+    overflow: auto;
+    font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    white-space: pre;
+    color: #dbe7ff;
+}
+
+.summary-box,
+.activity-log,
+.list-box {
+    margin: 14px;
+    padding: 14px;
+    font-size: 12px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    color: var(--text-muted);
+}
+
+.subsection-title {
+    padding: 0 14px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+}
+
+.panel-actions {
+    padding: 10px 14px 0;
+}
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 6, 23, 0.76);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    z-index: 1000;
+}
+
+.modal-content {
+    width: 100%;
+    max-width: 460px;
+    background: linear-gradient(180deg, #11192d 0%, #0f172a 100%);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: var(--shadow);
+}
+
+.modal-medium {
+    max-width: 640px;
+    max-height: 88vh;
+    overflow-y: auto;
+}
+
+.modal-large {
+    max-width: 92vw;
+    height: 88vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-header {
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.modal-hint {
+    color: var(--text-muted);
+    font-size: 13px;
+    line-height: 1.6;
+    margin-bottom: 14px;
+}
+
+.provider-settings-group {
+    margin-top: 8px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: rgba(8, 16, 31, 0.56);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.provider-settings-group h4 {
+    font-size: 13px;
+    color: var(--text);
+}
+
+#projectName {
+    margin-bottom: 12px;
+}
+
+.preview-frame {
+    flex: 1;
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: white;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 999px;
+}
+
+@media (max-width: 1220px) {
+    .workspace-body {
+        grid-template-columns: 240px minmax(0, 1fr) 380px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .workspace-body {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar,
+    .editor-panel,
+    .right-panel {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar {
+        max-height: 240px;
+    }
+
+    .editor-panel {
+        min-height: 420px;
+    }
+
+    .right-panel {
+        min-height: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        overflow-y: auto;
+    }
+
+    .app-header,
+    .workspace-toolbar,
+    .home-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .header-actions,
+    .toolbar-left,
+    .toolbar-right,
+    .inline-actions {
+        flex-wrap: wrap;
+    }
+
+    .header-actions .btn,
+    .toolbar-right .btn,
+    .inline-actions .btn {
+        flex: 1;
+        min-width: 130px;
+    }
+
+    .home-screen {
+        padding: 18px;
+    }
+
+    .projects-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-content,
+    .modal-medium {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-left h1 {
+        font-size: 20px;
+    }
+
+    .btn {
+        font-size: 12px;
+        padding: 8px 10px;
+    }
+
+    .panel-header {
+        font-size: 11px;
+    }
+
+    .file-editor,
+    .diff-viewer {
+        font-size: 12px;
+    }
+
+    /* Mobile section navigation */
+    .workspace-section-nav {
+        position: sticky;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        gap: 6px;
+        padding: 8px;
+        background: linear-gradient(180deg, rgba(8,12,22,0.9), rgba(6,8,14,0.95));
+        border-top: 1px solid var(--border);
+        z-index: 30;
+        justify-content: space-around;
+    }
+
+    .workspace-section-nav .section-tab {
+        background: rgba(255,255,255,0.02);
+        border: 1px solid transparent;
+        padding: 10px 12px;
+        border-radius: 999px;
+        color: var(--text);
+        font-weight: 700;
+        font-size: 13px;
+    }
+
+    .workspace-section-nav .section-tab.active {
+        background: var(--bg-panel);
+        border-color: var(--border-strong);
+        box-shadow: var(--shadow);
+    }
+
+    /* Mobile: show only active right-panel section to avoid long scroll */
+    .right-panel[data-mobile-collapse="true"] .panel-section {
+        display: none;
+    }
+    .right-panel[data-mobile-collapse="true"] .panel-section.active {
+        display: block;
+        animation: panelFadeIn 220ms ease;
+    }
+
+    @keyframes panelFadeIn {
+        from { opacity: 0; transform: translateY(6px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+}
+
+/* Desktop accordion */
+.panel-header .accordion-toggle {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.panel-section.collapsed .panel-body,
+.panel-section.collapsed .settings-row,
+.panel-section.collapsed .summary-box,
+.panel-section.collapsed .list-box,
+.panel-section.collapsed .staged-changes-list,
+.panel-section.collapsed .chat-history {
+    display: none !important;
+}
+
+/* Drag handles for panel resizing */
+.panel-drag-handle {
+    width: 6px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    cursor: col-resize;
+    z-index: 15;
+}
+
+.panel-drag-handle:focus {
+    outline: 2px solid rgba(79,140,255,0.18);
+}
+
+/* Make drag handles larger hit area on touch devices while keeping visual small */
+@media (pointer: coarse) {
+    .panel-drag-handle {
+        touch-action: none;
+        width: 14px;
+    }
+}
+
+/* Focus states for accessibility */
+:focus {
+    outline: 2px solid rgba(79,140,255,0.18);
+    outline-offset: 2px;
+}
+
+/* Touch friendly buttons */
+.btn { min-height: 40px; }
+
+/* Copy button */
+.panel-header .copy-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-muted);
+    padding: 6px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.panel-header .copy-btn.copied {
+    color: var(--success);
+}
+
+/* Small breakpoint 320px adjustments */
+@media (max-width: 320px) {
+    .workspace-section-nav .section-tab { padding: 8px 10px; font-size: 12px; }
+    .btn { padding: 8px 10px; }
+}
+
+/* Large desktop tweaks for 1440 */
+@media (min-width: 1440px) {
+    .workspace-body { max-width: 1400px; margin: 0 auto; }
+}
+
